@@ -20,7 +20,10 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideFunctions(() => getFunctions()),
     provideStorage(() => getStorage()),
-    provideMessaging(() => getMessaging())
+    provideMessaging(() => {
+    return getMessaging();
+}),
+
   ],
   
 };  

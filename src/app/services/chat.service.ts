@@ -75,13 +75,22 @@ export class ChatService {
 
   // Login Friendly Chat.
   // Signs-in Friendly Chat.
-  login() {
-      signInWithPopup(this.auth, this.provider).then((result) => {
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          this.router.navigate(['/', 'chat']);
-          return credential;
-      })
-  }
+  // Login Friendly Chat.
+// Signs-in Friendly Chat.
+login() {
+  signInWithPopup(this.auth, this.provider).then(async (result) => {
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    this.router.navigate(['/', 'chat']);
+
+    // NEU: Device-Token holen
+    await this.saveMessagingDeviceToken();
+
+    return credential;
+  }).catch(err => {
+    console.error('Login error', err);
+  });
+}
+
 
  // Logout of Friendly Chat.
   logout() {
@@ -197,7 +206,20 @@ saveImageMessage = async(file: any) => {
     return null;
   }
   // Requests permissions to show notifications.
-  requestNotificationsPermissions = async () => {};
+  // Requests permissions to show notifications.
+requestNotificationsPermissions = async () => {
+    console.log('Requesting notifications permission...');
+    const permission = await Notification.requestPermission();
+
+    if (permission === 'granted') {
+      console.log('Notification permission granted.');
+      // Notification permission granted.
+      await this.saveMessagingDeviceToken();
+    } else {
+      console.log('Unable to get permission to notify.');
+    }
+}
+
 
    // Saves the messaging device token to Cloud Firestore.
 saveMessagingDeviceToken= async () => {
